@@ -141,8 +141,8 @@ treemode._setOptions = function (options) {
         const showOnTop = ((windowHeight - top) < pickerHeight && top > pickerHeight)
 
         new VanillaPicker({
-          parent: parent,
-          color: color,
+          parent,
+          color,
           popup: showOnTop ? 'top' : 'bottom',
           onDone: function (color) {
             const alpha = color.rgba[3]
@@ -455,6 +455,40 @@ treemode.collapseAll = function () {
 }
 
 /**
+ * Expand/collapse a given JSON node.
+ * @param {Object} [options] Available parameters:
+ *                         {Array<String>} [path] Path for the node to expand/collapse.
+ *                         {Boolean} [isExpand]  When true, expand the node. Else collapse it.
+ *                         {Boolean} [recursive] When true, expand/collapse child nodes recursively.
+ *                         {Boolean} [withPath]  When true, expand/collapse all nodes of `path` itself.
+ */
+treemode.expand = function (options) {
+  if (!options || !this.node) return
+
+  const node = this.node.findNodeByPath(options.path)
+  if (!node) return
+
+  if (options.withPath) {
+    for (let i = 0; i < options.path.length; i++) {
+      const parentNode = this.node.findNodeByPath(options.path.slice(0, i))
+      if (parentNode) {
+        if (options.isExpand) {
+          parentNode.expand(false)
+        } else {
+          parentNode.collapse(false)
+        }
+      }
+    }
+  }
+
+  if (options.isExpand) {
+    node.expand(options.recursive)
+  } else {
+    node.collapse(options.recursive)
+  }
+}
+
+/**
  * The method onChange is called whenever a field or value is changed, created,
  * deleted, duplicated, etc.
  * @param {String} action  Change action. Available values: "editField",
@@ -557,7 +591,7 @@ treemode._onChange = function () {
 treemode.validate = function () {
   const root = this.node
   if (!root) { // TODO: this should be redundant but is needed on mode switch
-    return
+    return Promise.resolve([])
   }
 
   const json = root.getValue()
@@ -573,7 +607,7 @@ treemode.validate = function () {
         .map(function findNode (error) {
           return {
             node: root.findNode(error.dataPath),
-            error: error,
+            error,
             type: 'validation'
           }
         })
@@ -692,8 +726,8 @@ treemode._validateCustom = function (json) {
               }
 
               return {
-                node: node,
-                error: error,
+                node,
+                error,
                 type: 'customValidation'
               }
             })
@@ -804,7 +838,7 @@ treemode.setDomSelection = function (selection) {
       ? node.dom[selection.domName]
       : null
     if (selection.range && container) {
-      const range = Object.assign({}, selection.range, { container: container })
+      const range = Object.assign({}, selection.range, { container })
       setSelectionOffset(range)
     } else if (node) { // just a fallback
       node.focus()
@@ -847,8 +881,8 @@ treemode.getDomSelection = function () {
 
   return {
     path: node ? node.getInternalPath() : null,
-    domName: domName,
-    range: range,
+    domName,
+    range,
     paths: this.multiselection.length > 0
       ? this.multiselection.nodes.map(node => node.getInternalPath())
       : null,
@@ -988,6 +1022,13 @@ treemode._createFrame = function () {
     expandAll.title = translate('expandAll')
     expandAll.onclick = () => {
       editor.expandAll()
+      if (typeof this.options.onExpand === 'function') {
+        this.options.onExpand({
+          path: [],
+          isExpand: true,
+          recursive: true
+        })
+      }
     }
     this.menu.appendChild(expandAll)
 
@@ -998,6 +1039,13 @@ treemode._createFrame = function () {
     collapseAll.className = 'jsoneditor-collapse-all'
     collapseAll.onclick = () => {
       editor.collapseAll()
+      if (typeof this.options.onExpand === 'function') {
+        this.options.onExpand({
+          path: [],
+          isExpand: false,
+          recursive: true
+        })
+      }
     }
     this.menu.appendChild(collapseAll)
 
@@ -1208,7 +1256,7 @@ treemode._updateTreePath = function (pathNodes) {
     pathNodes.forEach(node => {
       const pathObj = {
         name: getName(node),
-        node: node,
+        node,
         children: []
       }
       if (node.childs && node.childs.length) {
@@ -1703,7 +1751,7 @@ treemode.showContextMenu = function (anchor, onClose) {
     items = this.options.onCreateMenu(items, {
       type: 'multiple',
       path: paths[0],
-      paths: paths
+      paths
     })
   }
 

@@ -177,7 +177,7 @@ JSONEditor.prototype.DEBOUNCE_INTERVAL = 150
 JSONEditor.VALID_OPTIONS = [
   'ajv', 'schema', 'schemaRefs', 'templates',
   'ace', 'theme', 'autocomplete',
-  'onChange', 'onChangeJSON', 'onChangeText',
+  'onChange', 'onChangeJSON', 'onChangeText', 'onExpand',
   'onEditable', 'onError', 'onEvent', 'onModeChange', 'onNodeName', 'onValidate', 'onCreateMenu',
   'onSelectionChange', 'onTextSelectionChange', 'onClassName',
   'onFocus', 'onBlur',
@@ -187,7 +187,8 @@ JSONEditor.VALID_OPTIONS = [
   'sortObjectKeys', 'navigationBar', 'statusBar', 'mainMenuBar', 'languages', 'language', 'enableSort', 'enableTransform', 'limitDragging',
   'maxVisibleChilds', 'onValidationError',
   'modalAnchor', 'popupAnchor',
-  'createQuery', 'executeQuery', 'queryDescription'
+  'createQuery', 'executeQuery', 'queryDescription',
+  'allowSchemaSuggestions', 'showErrorTable'
 ]
 
 /**
@@ -277,8 +278,6 @@ JSONEditor.prototype.setMode = function (mode) {
   const container = this.container
   const options = extend({}, this.options)
   const oldMode = options.mode
-  let data
-  let name
 
   options.mode = mode
   const config = JSONEditor.modes[mode]
@@ -287,8 +286,8 @@ JSONEditor.prototype.setMode = function (mode) {
   }
 
   const asText = (config.data === 'text')
-  name = this.getName()
-  data = this[asText ? 'getText' : 'get']() // get text or json
+  const name = this.getName()
+  const data = this[asText ? 'getText' : 'get']() // get text or json
 
   this.destroy()
   clear(this)
@@ -334,7 +333,7 @@ JSONEditor.prototype._onError = function (err) {
   if (this.options && typeof this.options.onError === 'function') {
     this.options.onError(err)
   } else {
-    alert(err.toString())
+    window.alert(err.toString())
   }
 }
 
@@ -399,6 +398,10 @@ JSONEditor.prototype.setSchema = function (schema, schemaRefs) {
     this.validate() // to clear current error messages
     this.refresh() // update DOM
   }
+
+  if (typeof this._onSchemaChange === 'function') {
+    this._onSchemaChange(schema, schemaRefs)
+  }
 }
 
 /**
@@ -407,6 +410,7 @@ JSONEditor.prototype.setSchema = function (schema, schemaRefs) {
  */
 JSONEditor.prototype.validate = () => {
   // must be implemented by treemode and textmode
+  return Promise.resolve([])
 }
 
 /**

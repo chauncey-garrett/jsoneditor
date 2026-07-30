@@ -34,6 +34,8 @@ Constructs a new JSONEditor.
 - `{Object} ace`
 
   Provide a custom version of the [Ace editor](http://ace.c9.io/) and use this instead of the version that comes embedded with JSONEditor. Only applicable when `mode` is `code`.
+  
+  When providing your own instance of Ace editor, be aware that JSONEditor assumes the following Ace plugins to be loaded: `mode-json`, `worker-json`, `ext-searchbox`, `ext-language_tools`.
 
   Note that when using the minimalist version of JSONEditor (which has Ace excluded), JSONEditor will try to load the Ace plugins `ace/mode/json` and `ace/ext/searchbox`. These plugins must be loaded beforehand or be available in the folder of the Ace editor.
 
@@ -97,6 +99,20 @@ Constructs a new JSONEditor.
   The function must either return a string containing CSS class names, or return `undefined` in order to do nothing for a specific node.
 
   In order to update css classes when they depend on external state, you can call `editor.refresh()`.
+
+- `{function} onExpand({ path, isExpand, recursive })`
+
+  Set a callback function to be invoked when a node is expanded/collapsed (not programtically via APIs). Only applicable when option `mode` is `tree`, `form`, or `view`.
+
+  The callback is invoked with an object containing `path`, `isExpand` and `recursive`:
+
+  ```
+  {
+    path: string[],
+    isExpand: boolean,
+    recursive: boolean
+  }
+  ```
 
 - `{function} onEditable({ path, field, value })`
 
@@ -177,7 +193,7 @@ Constructs a new JSONEditor.
 - `{function} onValidationError(errors: ValidationError[])`
 
   Set a callback function for validation and parse errors. Available in all modes.
-  The `ValidationError` contains a `type`, `path`, and `message`. 
+  The `ValidationError` contains a `type`, and an `error` object. 
 
   On validation of the json, if errors of any kind were found this callback is invoked with the errors data.
 
@@ -279,6 +295,14 @@ Constructs a new JSONEditor.
   Schemas that are referenced using the `$ref` property from the JSON schema that are set in the `schema` option,
   the object structure in the form of `{reference_key: schemaObject}`
 
+- `{boolean} allowSchemaSuggestions`
+
+  Enables autocomplete suggestions based on the JSON schema. `false` by default. when enabled and schema is configured, the editor will suggest text completions based on the schema properties, examples and enums.
+  
+  **limitation**: the completions will be presented only for a valid json.
+
+  Only applicable when `mode` is 'code'.
+
 - `{boolean} search`
 
   Enables a search box in the upper right corner of the JSONEditor. `true` by default. Only applicable when `mode` is 'tree', 'view', or 'form'.
@@ -337,7 +361,7 @@ Constructs a new JSONEditor.
 
      - `start`         : Match your input from the start, e.g. `ap` match `apple` but `pl` does not.
      - `contain`       : Contain your input or not, e.g. `pl` match `apple` too.
-     - Custom Function : Define custom filter rule, return `true` will match you input.
+     - Custom Function : Define custom filter rule with signature `function(token, match, config)`. The `match` parameter can be either a string or an object with `text` and `value` properties. Return `true` if the option matches the input token.
 
   - `{string} trigger`
 
@@ -367,9 +391,9 @@ Constructs a new JSONEditor.
 
      *Returns:*
 
-     - Can return an array with autocomplete options (strings), for example `['apple','cranberry','raspberry','pie']`
+     - Can return an array with autocomplete options. Options can be either strings (e.g. `['apple','cranberry','raspberry','pie']`) or objects with `text` and `value` properties (e.g. `[{text: 'Apple', value: 'apple'}, {text: 'Cranberry', value: 'cranberry'}]`)
      - Can return `null` when there are no autocomplete options.
-     - Can return an object `{startFrom: number, options: string[]}`. Here `startFrom` determines the start character from where the existing text will be replaced. `startFrom` is `0` by default, replacing the whole text.
+     - Can return an object `{startFrom: number, options: (string|object)[]}`. Here `startFrom` determines the start character from where the existing text will be replaced. `startFrom` is `0` by default, replacing the whole text. Options can be strings or objects as described above.
      - Can return a `Promise` resolving one of the return types above to support asynchronously retrieving a list with options.
 
 - `{boolean} mainMenuBar`
@@ -383,6 +407,10 @@ Constructs a new JSONEditor.
 - `{boolean} statusBar`
 
   Adds status bar to the bottom of the editor - the status bar shows the cursor position and a count of the selected characters. `true` by default. Only applicable when `mode` is 'code', 'text', or 'preview'.
+
+- `{boolean} | {Array} showErrorTable`
+
+  Automatically expand error table above the status bar on error or validation error if `mode` matches an array item. Alternatively used as a boolean value. Default value is `['text', 'preview']`.
 
 - `{function} onTextSelectionChange(start, end, text)`
 
@@ -678,6 +706,28 @@ Destroy the editor. Clean up DOM, event listeners, and web workers.
 #### `JSONEditor.expandAll()`
 
 Expand all fields. Only applicable for mode 'tree', 'view', and 'form'.
+
+#### `JSONEditor.expand(options)`
+
+Expand/collapse a given JSON node. Only applicable for mode 'tree', 'view' and 'form'.
+
+*`options` fields:*
+
+- `{Array.<String>} path`
+
+  Path for the node to expand/collapse. Required.
+
+- `{Boolean} isExpand`
+
+  When true, expand the node. Else collapse it. Required.
+
+- `{Boolean} recursive`
+
+  When true, expand/collapse child nodes recursively. Optional.
+
+- `{Boolean} withPath`
+
+  When true, expand/collapse all nodes of `path` itself. Optional.
 
 #### `JSONEditor.focus()`
 

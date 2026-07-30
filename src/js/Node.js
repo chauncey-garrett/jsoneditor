@@ -98,7 +98,7 @@ export class Node {
         const getValue = this.getValue.bind(this)
         const editable = this.editor.options.onEditable({
           field: this.field,
-          get value() {
+          get value () {
             return getValue()
           },
           path: this.getPath()
@@ -951,7 +951,7 @@ export class Node {
       const addClasses = this.editor.options.onClassName({
         path: this.getPath(),
         field: this.field,
-        get value() {
+        get value () {
           return getValue()
         }
       }) || ''
@@ -1562,7 +1562,7 @@ export class Node {
    */
   _setValueError (message) {
     this.valueError = {
-      message: message
+      message
     }
     this.updateError()
   }
@@ -1581,7 +1581,7 @@ export class Node {
    */
   _setFieldError (message) {
     this.fieldError = {
-      message: message
+      message
     }
     this.updateError()
   }
@@ -1617,8 +1617,8 @@ export class Node {
       path: this.getInternalPath(),
       oldValue: this.previousValue,
       newValue: this.value,
-      oldSelection: oldSelection,
-      newSelection: newSelection
+      oldSelection,
+      newSelection
     })
 
     this.previousValue = this.value
@@ -1650,8 +1650,8 @@ export class Node {
       index: this.getIndex(),
       oldValue: this.previousField,
       newValue: this.field,
-      oldSelection: oldSelection,
-      newSelection: newSelection
+      oldSelection,
+      newSelection
     })
 
     this.previousField = this.field
@@ -2887,12 +2887,12 @@ export class Node {
               oldIndex: oldNextNode.getIndex(),
               newIndex: firstNode.getIndex(),
 
-              oldIndexRedo: oldIndexRedo,
-              newIndexRedo: newIndexRedo,
-              oldParentPathRedo: oldParentPathRedo,
-              newParentPathRedo: newParentPathRedo,
+              oldIndexRedo,
+              newIndexRedo,
+              oldParentPathRedo,
+              newParentPathRedo,
 
-              oldSelection: oldSelection,
+              oldSelection,
               newSelection: this.editor.getDomSelection()
             })
           }
@@ -2946,12 +2946,12 @@ export class Node {
             oldIndex: oldNextNode.getIndex(),
             newIndex: firstNode.getIndex(),
 
-            oldIndexRedo: oldIndexRedo,
-            newIndexRedo: newIndexRedo,
-            oldParentPathRedo: oldParentPathRedo,
-            newParentPathRedo: newParentPathRedo,
+            oldIndexRedo,
+            newIndexRedo,
+            oldParentPathRedo,
+            newParentPathRedo,
 
-            oldSelection: oldSelection,
+            oldSelection,
             newSelection: this.editor.getDomSelection()
           })
         }
@@ -2993,12 +2993,12 @@ export class Node {
               oldIndex: oldNextNode.getIndex(),
               newIndex: firstNode.getIndex(),
 
-              oldIndexRedo: oldIndexRedo,
-              newIndexRedo: newIndexRedo,
-              oldParentPathRedo: oldParentPathRedo,
-              newParentPathRedo: newParentPathRedo,
+              oldIndexRedo,
+              newIndexRedo,
+              oldParentPathRedo,
+              newParentPathRedo,
 
-              oldSelection: oldSelection,
+              oldSelection,
               newSelection: this.editor.getDomSelection()
             })
           }
@@ -3063,13 +3063,13 @@ export class Node {
             fieldNames: selectedNodes.map(getField),
             oldParentPath: oldParent.getInternalPath(),
             newParentPath: firstNode.parent.getInternalPath(),
-            oldParentPathRedo: oldParentPathRedo,
-            newParentPathRedo: newParentPathRedo,
-            oldIndexRedo: oldIndexRedo,
-            newIndexRedo: newIndexRedo,
+            oldParentPathRedo,
+            newParentPathRedo,
+            oldIndexRedo,
+            newIndexRedo,
             oldIndex: oldNextNode.getIndex(),
             newIndex: firstNode.getIndex(),
-            oldSelection: oldSelection,
+            oldSelection,
             newSelection: this.editor.getDomSelection()
           })
         }
@@ -3111,6 +3111,14 @@ export class Node {
       // Put the table online again
       frame.appendChild(table)
       frame.scrollTop = scrollTop
+    }
+
+    if (typeof this.editor.options.onExpand === 'function') {
+      this.editor.options.onExpand({
+        path: this.getPath(),
+        isExpand: this.expanded,
+        recursive: recurse
+      })
     }
   }
 
@@ -3169,7 +3177,7 @@ export class Node {
     const newNode = new Node(this.editor, {
       field: (field !== undefined) ? field : '',
       value: (value !== undefined) ? value : '',
-      type: type
+      type
     })
     newNode.expand(true)
 
@@ -3183,10 +3191,10 @@ export class Node {
     this.editor._onAction('insertBeforeNodes', {
       nodes: [newNode],
       paths: [newNode.getInternalPath()],
-      beforePath: beforePath,
+      beforePath,
       parentPath: this.parent.getInternalPath(),
-      oldSelection: oldSelection,
-      newSelection: newSelection
+      oldSelection,
+      newSelection
     })
   }
 
@@ -3203,7 +3211,7 @@ export class Node {
     const newNode = new Node(this.editor, {
       field: (field !== undefined) ? field : '',
       value: (value !== undefined) ? value : '',
-      type: type
+      type
     })
     newNode.expand(true)
     this.parent.insertAfter(newNode, this)
@@ -3216,8 +3224,8 @@ export class Node {
       paths: [newNode.getInternalPath()],
       afterPath: this.getInternalPath(),
       parentPath: this.parent.getInternalPath(),
-      oldSelection: oldSelection,
-      newSelection: newSelection
+      oldSelection,
+      newSelection
     })
   }
 
@@ -3234,7 +3242,7 @@ export class Node {
     const newNode = new Node(this.editor, {
       field: (field !== undefined) ? field : '',
       value: (value !== undefined) ? value : '',
-      type: type
+      type
     })
     newNode.expand(true)
     this.parent.appendChild(newNode)
@@ -3246,8 +3254,8 @@ export class Node {
       nodes: [newNode],
       paths: [newNode.getInternalPath()],
       parentPath: this.parent.getInternalPath(),
-      oldSelection: oldSelection,
-      newSelection: newSelection
+      oldSelection,
+      newSelection
     })
   }
 
@@ -3265,10 +3273,10 @@ export class Node {
 
       this.editor._onAction('changeType', {
         path: this.getInternalPath(),
-        oldType: oldType,
-        newType: newType,
-        oldSelection: oldSelection,
-        newSelection: newSelection
+        oldType,
+        newType,
+        oldSelection,
+        newSelection
       })
     }
   }
@@ -3335,7 +3343,7 @@ export class Node {
     if (triggerAction === true) {
       this.editor._onAction('sort', {
         path: this.getInternalPath(),
-        oldChilds: oldChilds,
+        oldChilds,
         newChilds: this.childs
       })
     }
@@ -3352,7 +3360,7 @@ export class Node {
 
     this.editor._onAction('transform', {
       path: this.getInternalPath(),
-      oldValue: oldValue,
+      oldValue,
       newValue: this.getInternalValue()
     })
   }
@@ -3377,8 +3385,8 @@ export class Node {
     this.hide({ resetVisibleChilds: false })
 
     return {
-      table: table,
-      nextTr: nextTr
+      table,
+      nextTr
     }
   }
 
@@ -3938,7 +3946,7 @@ export class Node {
 
       items = this.editor.options.onCreateMenu(items, {
         type: 'single',
-        path: path,
+        path,
         paths: [path]
       })
     }
@@ -4099,7 +4107,7 @@ export class Node {
             path: this.getPath(),
             size: count,
             type: this.type,
-            get value() {
+            get value () {
               return getValue()
             }
           })
@@ -4198,7 +4206,7 @@ Node.onDragStart = (nodes, event) => {
     oldParentPathRedo: parent.getInternalPath(),
     oldIndexRedo: firstNode.getIndex(),
     mouseX: event.pageX,
-    offsetY: offsetY,
+    offsetY,
     level: firstNode.getLevel()
   }
   document.body.style.cursor = 'move'
@@ -4413,14 +4421,14 @@ Node.onDragEnd = (nodes, event) => {
       count: nodes.length,
       fieldNames: nodes.map(getField),
 
-      oldParentPath: oldParentPath,
-      newParentPath: newParentPath,
-      oldIndex: oldIndex,
-      newIndex: newIndex,
+      oldParentPath,
+      newParentPath,
+      oldIndex,
+      newIndex,
 
-      oldIndexRedo: oldIndexRedo,
-      newIndexRedo: newIndexRedo,
-      oldParentPathRedo: oldParentPathRedo,
+      oldIndexRedo,
+      newIndexRedo,
+      oldParentPathRedo,
       newParentPathRedo: null, // This is a hack, value will be filled in during undo
 
       oldSelection: editor.drag.oldSelection,
@@ -4478,7 +4486,91 @@ Node._findEnum = schema => {
 }
 
 /**
+ * Implementation for _findSchema
+ * @param {Object} topLevelSchema
+ * @param {Object} schemaRefs
+ * @param {Array.<string | number>} path
+ * @param {Object} currentSchema
+ * @return {Object | boolean | null}
+ * @private
+ */
+Node._findOneSchema = (topLevelSchema, schemaRefs, path, currentSchema) => {
+  const nextPath = path.slice(1, path.length)
+  const nextKey = path[0]
+
+  if (typeof currentSchema === 'object' && '$ref' in currentSchema && typeof currentSchema.$ref === 'string') {
+    const ref = currentSchema.$ref
+    if (ref in schemaRefs) {
+      currentSchema = schemaRefs[ref]
+    } else if (ref.startsWith('#/')) {
+      const refPath = ref.substring(2).split('/')
+      currentSchema = topLevelSchema
+      for (const segment of refPath) {
+        if (segment in currentSchema) {
+          currentSchema = currentSchema[segment]
+        } else {
+          throw Error(`Unable to resolve reference ${ref}`)
+        }
+      }
+    } else if (ref.match(/#\//g)?.length === 1) {
+      const [schemaUrl, relativePath] = ref.split('#/')
+      if (schemaUrl in schemaRefs) {
+        const referencedSchema = schemaRefs[schemaUrl]
+        const reference = { $ref: '#/'.concat(relativePath) }
+        const auxNextPath = []
+        auxNextPath.push(nextKey)
+        if (nextPath.length > 0) {
+          auxNextPath.push(...nextPath)
+        }
+        return Node._findSchema(referencedSchema, schemaRefs, auxNextPath, reference)
+      } else {
+        throw Error(`Unable to resolve reference ${ref}`)
+      }
+    } else {
+      throw Error(`Unable to resolve reference ${ref}`)
+    }
+  }
+
+  // We have no more path segments to resolve, return the currently found schema
+  // We do this here, after resolving references, in case of the leaf schema beeing a reference
+  if (nextKey === undefined) {
+    return currentSchema
+  }
+
+  if (typeof nextKey === 'string') {
+    if (typeof currentSchema.properties === 'object' && currentSchema.properties !== null && nextKey in currentSchema.properties) {
+      currentSchema = currentSchema.properties[nextKey]
+      return Node._findSchema(topLevelSchema, schemaRefs, nextPath, currentSchema)
+    }
+    if (typeof currentSchema.patternProperties === 'object' && currentSchema.patternProperties !== null) {
+      for (const prop in currentSchema.patternProperties) {
+        if (nextKey.match(prop)) {
+          currentSchema = currentSchema.patternProperties[prop]
+          return Node._findSchema(topLevelSchema, schemaRefs, nextPath, currentSchema)
+        }
+      }
+    }
+    if (typeof currentSchema.additionalProperties === 'object') {
+      currentSchema = currentSchema.additionalProperties
+      return Node._findSchema(topLevelSchema, schemaRefs, nextPath, currentSchema)
+    }
+    return null
+  }
+  if (typeof nextKey === 'number' && typeof currentSchema.items === 'object' && currentSchema.items !== null) {
+    currentSchema = currentSchema.items
+    return Node._findSchema(topLevelSchema, schemaRefs, nextPath, currentSchema)
+  }
+
+  return null
+}
+
+/**
  * Return the part of a JSON schema matching given path.
+ *
+ * Note that this attempts to find *a* schema matching the path, not necessarily
+ * the best / most appropriate.  For example, oneOf vs. anyOf vs. allOf may
+ * result in different schemas being applied in practice.
+ *
  * @param {Object} topLevelSchema
  * @param {Object} schemaRefs
  * @param {Array.<string | number>} path
@@ -4487,9 +4579,6 @@ Node._findEnum = schema => {
  * @private
  */
 Node._findSchema = (topLevelSchema, schemaRefs, path, currentSchema = topLevelSchema) => {
-  const nextPath = path.slice(1, path.length)
-  const nextKey = path[0]
-
   let possibleSchemas = [currentSchema]
   for (const subSchemas of [currentSchema.oneOf, currentSchema.anyOf, currentSchema.allOf]) {
     if (Array.isArray(subSchemas)) {
@@ -4497,74 +4586,20 @@ Node._findSchema = (topLevelSchema, schemaRefs, path, currentSchema = topLevelSc
     }
   }
 
+  let fallback = null
   for (const schema of possibleSchemas) {
-    currentSchema = schema
-
-    if ('$ref' in currentSchema && typeof currentSchema.$ref === 'string') {
-      const ref = currentSchema.$ref
-      if (ref in schemaRefs) {
-        currentSchema = schemaRefs[ref]
-      } else if (ref.startsWith('#/')) {
-        const refPath = ref.substring(2).split('/')
-        currentSchema = topLevelSchema
-        for (const segment of refPath) {
-          if (segment in currentSchema) {
-            currentSchema = currentSchema[segment]
-          } else {
-            throw Error(`Unable to resolve reference ${ref}`)
-          }
-        }
-      } else if (ref.match(/#\//g)?.length === 1) {
-        const [schemaUrl, relativePath] = ref.split('#/')
-        if (schemaUrl in schemaRefs) {
-          const referencedSchema = schemaRefs[schemaUrl]
-          const reference = { $ref: '#/'.concat(relativePath) }
-          const auxNextPath = []
-          auxNextPath.push(nextKey)
-          if (nextPath.length > 0) {
-            auxNextPath.push(...nextPath)
-          }
-          return Node._findSchema(referencedSchema, schemaRefs, auxNextPath, reference)
-        } else {
-          throw Error(`Unable to resolve reference ${ref}`)
-        }
-      } else {
-        throw Error(`Unable to resolve reference ${ref}`)
-      }
-    }
-
-    // We have no more path segments to resolve, return the currently found schema
-    // We do this here, after resolving references, in case of the leaf schema beeing a reference
-    if (nextKey === undefined) {
-      return currentSchema
-    }
-
-    if (typeof nextKey === 'string') {
-      if (typeof currentSchema.properties === 'object' && currentSchema.properties !== null && nextKey in currentSchema.properties) {
-        currentSchema = currentSchema.properties[nextKey]
-        return Node._findSchema(topLevelSchema, schemaRefs, nextPath, currentSchema)
-      }
-      if (typeof currentSchema.patternProperties === 'object' && currentSchema.patternProperties !== null) {
-        for (const prop in currentSchema.patternProperties) {
-          if (nextKey.match(prop)) {
-            currentSchema = currentSchema.patternProperties[prop]
-            return Node._findSchema(topLevelSchema, schemaRefs, nextPath, currentSchema)
-          }
-        }
-      }
-      if (typeof currentSchema.additionalProperties === 'object') {
-        currentSchema = currentSchema.additionalProperties
-        return Node._findSchema(topLevelSchema, schemaRefs, nextPath, currentSchema)
-      }
+    const result = Node._findOneSchema(topLevelSchema, schemaRefs, path, schema)
+    // Although we don't attempt to find the best / most appropriate schema, we
+    // can at least attempt to find something more specific than `true`.
+    if (result === true) {
+      fallback = true
       continue
-    }
-    if (typeof nextKey === 'number' && typeof currentSchema.items === 'object' && currentSchema.items !== null) {
-      currentSchema = currentSchema.items
-      return Node._findSchema(topLevelSchema, schemaRefs, nextPath, currentSchema)
+    } else if (result !== null) {
+      return result
     }
   }
 
-  return null
+  return fallback
 }
 
 /**
@@ -4598,12 +4633,12 @@ Node.onRemove = nodes => {
 
     // store history action
     editor._onAction('removeNodes', {
-      nodes: nodes,
-      paths: paths,
+      nodes,
+      paths,
       parentPath: parent.getInternalPath(),
       index: firstIndex,
-      oldSelection: oldSelection,
-      newSelection: newSelection
+      oldSelection,
+      newSelection
     })
   }
 }
@@ -4659,8 +4694,8 @@ Node.onDuplicate = nodes => {
       clonePaths: clones.map(getInternalPath),
       afterPath: lastNode.getInternalPath(),
       parentPath: parent.getInternalPath(),
-      oldSelection: oldSelection,
-      newSelection: newSelection
+      oldSelection,
+      newSelection
     })
   }
 }

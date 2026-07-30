@@ -35,7 +35,7 @@ export function showTransformModal (
 ) {
   const value = json
 
-  const content = '<label class="pico-modal-contents">' +
+  const content = '<div class="pico-modal-contents">' +
       '<div class="pico-modal-header">' + translate('transform') + '</div>' +
       '<p>' + queryDescription + '</p>' +
       '<div class="jsoneditor-jmespath-label">' + translate('transformWizardLabel') + ' </div>' +
@@ -111,7 +111,7 @@ export function showTransformModal (
 
   picoModal({
     parent: container,
-    content: content,
+    content,
     overlayClass: 'jsoneditor-modal-overlay',
     overlayStyles: {
       backgroundColor: 'rgb(1,1,1)',

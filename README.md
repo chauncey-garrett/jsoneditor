@@ -2,24 +2,23 @@
 
 [![Version](https://img.shields.io/npm/v/jsoneditor.svg)](https://www.npmjs.com/package/jsoneditor)
 [![Downloads](https://img.shields.io/npm/dm/jsoneditor.svg)](https://www.npmjs.com/package/jsoneditor)
-[![Maintenance](https://img.shields.io/maintenance/yes/2022.svg)](https://github.com/josdejong/jsoneditor/pulse)
+[![Maintenance](https://img.shields.io/maintenance/yes/2026.svg)](https://github.com/josdejong/jsoneditor/pulse)
 [![License](https://img.shields.io/github/license/josdejong/jsoneditor.svg)](https://github.com/josdejong/jsoneditor/blob/master/LICENSE)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fjosdejong%2Fjsoneditor.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fjosdejong%2Fjsoneditor?ref=badge_shield)
 
-JSON Editor is a web-based tool to view, edit, format, and validate JSON.
-It has various modes such as a tree editor, a code editor, and a plain text
-editor.
+JSON Editor is a web-based tool to view, edit, format, and validate JSON. It has various modes such as a tree editor, a code editor, and a plain text editor. The editor can be used as a component in your own web application. It can be loaded as CommonJS module, AMD module, or as a regular javascript file.
 
-The editor can be used as a component in your own web application. The library
-can be loaded as CommonJS module, AMD module, or as a regular javascript file.
+The library was originally developed as core component of the popular web application https://jsoneditoronline.org and has been open sourced since then.
 
-Supported browsers: Chrome, Firefox, Safari, Opera, Edge, Internet Explorer 11.
+Supported browsers: Chrome, Firefox, Safari, Edge.
 
 <img alt="json editor" src="https://raw.github.com/josdejong/jsoneditor/master/misc/jsoneditor.png"> &nbsp; <img alt="code editor" src="https://raw.github.com/josdejong/jsoneditor/master/misc/codeeditor.png">
 
-Cross browser testing for JSONEditor is generously provided by <a href="https://www.browserstack.com" target="_blank">BrowserStack</a>
+Continuous integration tests are run on [GitHub Actions](https://github.com/josdejong/mathjs/actions), and [LambdaTest](https://www.lambdatest.com) is used to test on all major browsers.
 
-<a href="https://www.browserstack.com" target="_blank"><img alt="BrowserStack" src="https://raw.github.com/josdejong/jsoneditor/master/misc/browserstack.png"></a>
+[![LambdaTest](https://raw.github.com/josdejong/mathjs/master/misc/lambdatest.svg)](https://www.lambdatest.com)
+
+Thanks, GitHub Actions and LambdaTest for the generous support for this open source project!
 
 ## Successor: svelte-jsoneditor
 
@@ -79,9 +78,6 @@ JSONEditor has various modes, with the following features.
 with npm (recommended):
 
     npm install jsoneditor
-
-> Note that to use JSONEditor in Internet Explorer 11, it is necessary
-> to load a polyfill for `Promise` in your application.
 
 Alternatively, you can use another JavaScript package manager like https://yarnpkg.com/, or a CDN such as https://cdnjs.com/ or https://www.jsdelivr.com/.
 
@@ -173,22 +169,8 @@ npm run lint
 ```
 
 
-## Custom builds
+## License
 
-The source code of JSONEditor consists of CommonJS modules. JSONEditor can be bundled in a customized way using a module bundler like [browserify](http://browserify.org/) or [webpack](http://webpack.github.io/). First, install all dependencies of jsoneditor:
+`jsoneditor` is released as open source under the permissive the [Apache 2.0 license](LICENSE.md).
 
-    npm install
-
-To create a custom bundle of the source code using browserify:
-
-    browserify ./index.js -o ./jsoneditor.custom.js -s JSONEditor
-
-The Ace editor, used in mode `code`, accounts for about one third of the total
-size of the library. To exclude the Ace editor from the bundle:
-
-    browserify ./index.js -o ./jsoneditor.custom.js -s JSONEditor -x brace -x brace/mode/json -x brace/ext/searchbox
-
-To minify the generated bundle, use [uglifyjs](https://github.com/mishoo/UglifyJS2):
-
-    uglifyjs ./jsoneditor.custom.js -o ./jsoneditor.custom.min.js -m -c
-
+**If you are using jsoneditor commercially, there is a _social_ (but no legal) expectation that you help fund its maintenance. [Start here](https://github.com/sponsors/josdejong).**
